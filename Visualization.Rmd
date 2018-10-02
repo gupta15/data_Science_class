@@ -87,6 +87,7 @@ ggplot(weather_df, aes(x = tmin, y = tmax)) +
 ```
 
 More manipulation
+sqrt does square root transformation
 
 ```{r}
 ggplot(weather_df, aes(x = tmin, y = tmax)) + 
@@ -102,5 +103,22 @@ ggplot(weather_df, aes(x = tmin, y = tmax)) +
                      limits = c(-20, 30)) + 
   scale_y_continuous(trans = "sqrt", 
                      position = "right")
+```
+
+##Color themes
+
+Adjust color
+
+```{r}
+ggplot(weather_df, aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    caption = "Data from the rnoaa package"
+  ) + 
+  scale_color_hue(name = "Location", 
+                  h = c(100, 300))
 ```
 

@@ -12,6 +12,7 @@ output: html_document
 library(tidyverse)
 library(janitor)
 library(dplyr)
+library(knitr)
 options(tibble.print_min = 5)
 ```
 

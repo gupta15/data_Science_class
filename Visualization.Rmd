@@ -248,6 +248,8 @@ ggplot(weather_df, aes(x = date, y = tmax, color = name)) +
   theme(legend.position = "bottom")
 ```
 
+
+
 ##Arguments for geom_
 
 ```{r}
@@ -262,5 +264,76 @@ waikiki =
 ggplot(waikiki, aes(x = date, y = tmax, color = name)) + 
   geom_point() + 
   geom_line(data = central_park)
+```
+
+
+##Patchwork
+
+We’ve seen facetting as an approach to create the “same plot” for several levels of a categorical variable, and this can get you pretty far. Sometimes, though, you want to show two or three fundamentally different plots in the same graphic: you may want to juxtapose a scatterplot and a boxplot, or show scatterplots illustrating relationships between different variables. In this case, a solution is to create each of the panels you want separately and combine panels using tools in the patchwork package:
+
+```{r}
+devtools::install_github("thomasp85/patchwork")
+```
+
+Look into facetting that Jeff showed in class
+
+
+```{r}
+library(patchwork)
+tmax_tmin_p = ggplot(weather_df, aes(x = tmax, y = tmin, color = name)) + 
+  geom_point(alpha = .5) +
+  theme(legend.position = "none")
+
+prcp_dens_p = weather_df %>% 
+  filter(prcp > 0) %>% 
+  ggplot(aes(x = prcp, fill = name)) + 
+  geom_density(alpha = .5) + 
+  theme(legend.position = "none")
+
+tmax_date_p = ggplot(weather_df, aes(x = date, y = tmax, color = name)) + 
+  geom_point(alpha = .5) +
+  geom_smooth(se = FALSE) + 
+  theme(legend.position = "bottom")
+
+(tmax_tmin_p + prcp_dens_p) / tmax_date_p
+```
+
+## Data manipulation
+
+factors...
+
+```{r}
+ggplot(weather_df, aes(x=name, y=tmax, fill=name)) +
+  geom_violin()
+```
+```{r}
+weather_df %>%
+  mutate(name = forcats::fct_relevel(name, c("Waikiki_HA", "CentralPark_NY", "Waterhole_WA"))) %>% 
+  ggplot(aes(x = name, y = tmax)) + 
+  geom_violin(aes(fill = name), color = "blue", alpha = .5) + 
+  theme(legend.position = "bottom")
+```
+
+A second example reorders name according to tmax values in each name:
+
+```{r}
+weather_df %>%
+  mutate(name = forcats::fct_reorder(name, tmax)) %>% 
+  ggplot(aes(x = name, y = tmax)) + 
+  geom_violin(aes(fill = name), color = "blue", alpha = .5) + 
+  theme(legend.position = "bottom")
+```
+
+
+##Advanced tidying
+
+```{r}
+weather_df %>%
+  select(name, tmax, tmin) %>% 
+  gather(key = observation, value = temp, tmax:tmin) %>% 
+  ggplot(aes(x = temp, fill = observation)) +
+  geom_density(alpha = .5) + 
+  facet_grid(~name) + 
+  viridis::scale_fill_viridis(discrete = TRUE)
 ```
 

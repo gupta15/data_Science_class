@@ -52,4 +52,8 @@ select(-bdi_str, -score_str) %>%
 mutate(visit = replace(visit, visit == "bl", "00m")) 
   pulse_df
 ```
+```{r}
+library(ggridges)
+
+```
  
